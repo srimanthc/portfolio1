@@ -9,62 +9,63 @@ public class App {
         Scanner sc = new Scanner(System.in);
         Score log = new Score();
         char currentFirst = 'X';  // X goes first in the first round
-
-        System.out.println("Welcome to Tic-Tac-Toe!\n");
-        System.out.println("What kind of game would you like to play?\n");
-        System.out.println("1. Human vs. Human");
-        System.out.println("2. Human vs. Computer");
-        System.out.println("3. Computer vs. Human");
-
-        int mode = 0;
-        while (mode < 1 || mode > 3) {
-            System.out.print("\nWhat is your selection? ");
-            try {
-                mode = Integer.parseInt(sc.nextLine().trim());
-                if (mode < 1 || mode > 3) {
-                    System.out.println("Please enter 1, 2, or 3.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("That is not a valid number. Try again.");
-            }
-        }
-
         boolean playAgain = true;
 
         while (playAgain) {
-            Board board = new Board();
-            char turn = currentFirst;
-            OpportunisticPlayer ai = null;
+            int mode = 0;
 
-            // Set up AI player if needed
+            System.out.println("Welcome to Tic-Tac-Toe!\n");
+            System.out.println("What kind of game would you like to play?\n");
+            System.out.println("1. Human vs. Human");
+            System.out.println("2. Human vs. Computer");
+            System.out.println("3. Computer vs. Human");
+
+            while (mode < 1 || mode > 3) {
+                System.out.print("\nWhat is your selection? ");
+                try {
+                    mode = Integer.parseInt(sc.nextLine().trim());
+                    if (mode < 1 || mode > 3) {
+                        System.out.println("Please enter 1, 2, or 3.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("That is not a valid number. Try again.");
+                }
+            }
+
+            Board board = new Board();
+            OpportunisticPlayer ai = null;
+            char aiMark = ' ';
+            char humanMark = ' ';
+            
+            // Setup AI and decide who goes first
             if (mode != 1) {
-                char aiMark;
                 if (mode == 2) {
                     aiMark = 'O';
+                    humanMark = 'X';
                 } else {
                     aiMark = 'X';
+                    humanMark = 'O';
                 }
+
                 ai = new OpportunisticPlayer(aiMark);
 
                 if (aiMark == 'X') {
+                    currentFirst = 'X';
                     System.out.println("\nGreat! The computer will go first.\n");
                 } else {
+                    currentFirst = 'X';
                     System.out.println("\nGreat! The human will go first.\n");
                 }
+            } else {
+                currentFirst = 'X';
             }
+
+            char turn = currentFirst;
 
             // Play one round
             while (!board.isFinished()) {
                 board.printBoard();
-
-                boolean isHumanTurn = false;
-                if (mode == 1) {
-                    isHumanTurn = true;  // Human vs Human
-                } else if (mode == 2 && turn == 'X') {
-                    isHumanTurn = true;  // Human is X
-                } else if (mode == 3 && turn == 'O') {
-                    isHumanTurn = true;  // Human is O
-                }
+                boolean isHumanTurn = (mode == 1) || (turn == humanMark);
 
                 if (isHumanTurn) {
                     System.out.print("\n" + turn + ", choose your move (1-9): ");
@@ -109,17 +110,9 @@ public class App {
 
             // Decide who goes first next round
             if (result == 'T') {
-                if (currentFirst == 'X') {
-                    currentFirst = 'O';
-                } else {
-                    currentFirst = 'X';
-                }
+                currentFirst = (currentFirst == 'X') ? 'O' : 'X';
             } else {
-                if (result == 'X') {
-                    currentFirst = 'O';
-                } else {
-                    currentFirst = 'X';
-                }
+                currentFirst = (result == 'X') ? 'O' : 'X';
             }
 
             // Ask if user wants to play again
