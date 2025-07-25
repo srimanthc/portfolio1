@@ -41,19 +41,62 @@ public class Board {
         }
         // tie?
         boolean full = true;
-        for (char c : cells) if (c == ' ') full = false;
-        if (full) winner = 'T';
+        for (char c : cells) {
+            if (c == ' ') {
+                full = false;
+                break;
+            }
+        }
+        if (full) {
+            winner = 'T';
+        }
+
     }
 
     public void printBoard() {
         System.out.println();
         for (int i = 0; i < 9; i++) {
-            char cell = (cells[i] == ' ') ? Character.forDigit(i + 1, 10) : cells[i];
+            char cell;
+            if (cells[i] == ' ') {
+                cell = (char) ('1' + i);
+            } else {
+                cell = cells[i];
+            }
+            
             System.out.print(" " + cell + " ");          // one space on each side
             if (i % 3 != 2) System.out.print("|");
             else if (i != 8) System.out.print("\n---+---+---\n");
         }
         System.out.println();
     }
+
+    public char[] getCells() {
+        return Arrays.copyOf(cells, cells.length);
+    }
+    
+    public int getMoveCount() {
+        int count = 0;
+        for (char c : cells){
+            if (c != ' '){
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    public boolean checkWinner(char mark) {
+        int[][] lines = {
+            {0,1,2},{3,4,5},{6,7,8}, // rows
+            {0,3,6},{1,4,7},{2,5,8}, // cols
+            {0,4,8},{2,4,6}          // diags
+        };
+        for (int[] ln : lines) {
+            if (cells[ln[0]] == mark && cells[ln[1]] == mark && cells[ln[2]] == mark) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     
 }
